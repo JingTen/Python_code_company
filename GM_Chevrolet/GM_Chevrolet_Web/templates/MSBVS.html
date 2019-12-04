@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+
+{% block title %}雪佛兰 配置数量分布{% endblock %}
+
+
+{% block content %}
+{{ super() }}
+
+    {% block page_content %}
+    <div class="page-header" align="center">
+        <h1>VIN分类统计-VIN8-配置数量分布</h1>
+    </div>
+    {% endblock %}
+
+    <table class="table table-bordered table-condensed table-striped table-hover" name="model-table" style="width: 70%;height: auto" align="center">
+        <tr>
+            <th class="text-center">Model</th>
+            <th class="text-center">Series</th>
+            <th class="text-center">Body</th>
+            <th class="text-center">VIN8</th>
+            <th class="text-center">生产开始时间</th>
+            <th class="text-center">生产结束时间</th>
+            <th class="text-center">VIN数量</th>
+        </tr>
+        {% for i in results_table_display %}
+            <tr>
+                <td class="text-center" id="Model">{{ i[0] }}</td>
+                <td class="text-center" id="Series">{{ i[1] }}</td>
+                <td class="text-center" id="Body">{{ i[2] }}</td>
+                <td class="text-center" id="VIN8">{{ i[3] }}</td>
+                <td class="text-center" id="生产开始时间">{{ i[4] }}</td>
+                <td class="text-center" id="生产结束时间">{{ i[5] }}</td>
+                <td class="text-center" id="VIN数量">{{ i[6] }}</td>
+            </tr>
+        {% endfor %}
+    </table>
+
+    <table class="table table-bordered table-condensed table-striped table-hover" name="DynamicHash-table" style="width: 70%;height: auto" align="center">
+            <tr>
+                <th class="text-center">DynamicHash</th>
+                <th class="text-center">CheckCodes</th>
+                <th class="text-center">YesOrNo</th>
+                <th class="text-center">VIN数量</th>
+                <th class="text-center">生产时间</th>
+                <th class="text-center">已匹配车型ID</th>
+                <th class="text-center">操作</th>
+            </tr>
+            {% if results_DynamicHash %}
+                {% for i in results_DynamicHash %}
+                    <tr>
+                        <td class="text-center">{{ i[0] }}</td>
+                        <td class="text-center">{{ i[1] }}</td>
+                        <td class="text-center">{{ i[2] }}</td>
+                        <td class="text-center">{{ i[3] }}</td>
+                        <td class="text-center"></td>
+                        <td class="text-center"></td>
+                        <td class="text-center">
+                            <a href="/Home/Chevrolet/model={{ results_table_display[0][0] }}&series={{ results_table_display[0][1] }}&body={{ results_table_display[0][2] }}&VIN8={{ results_table_display[0][3] }}/{{ i[0] }}" target="_blank">Go! 匹配</a>
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+                <tr>
+                    <td class="text-center">--未加入对比项进行动态分组--</td>
+                    <td class="text-center">---</td>
+                    <td class="text-center">---</td>
+                    <td class="text-center">---</td>
+                    <td class="text-center">---</td>
+                    <td class="text-center">---</td>
+                    <td class="text-center">---</td>
+                </tr>
+            {% endif %}
+    </table>
+
+    <div class="row">
+        <!-- 复选框 -->
+        <div class="column col-xs-1 col-md-offset-1 codes-group" style="width: auto;height: auto">
+            <div class="code-group">
+                <!--
+                <label>
+                    <input type="submit" name="Submit" value="   1.加入对比项   ">
+                </label>
+                <br>
+                -->
+                <button type="button" class="btn btn-danger" onclick="SetCompare()">
+                    ----加入对比项，执行动态hash分组（若已有分组则重置）----
+                </button>
+                <input type="submit" class="btn btn-success" value="----清除已勾选配置代码----" name="resetBtn" onclick="ResetCompare()"/>
+                <div class="checkbox">
+                    <label>
+                        <input type="checkbox" disabled>
+                        <b>配置代码 - 中文描述  *  [ 数量 ]</b>
+                    </label>
+                </div>
+
+                {% for result in results_descriptionCN_dict %}
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="checkbox-codes" value="{{ result }}" id="{{ result }}">{{ result }} - {{ results_descriptionCN_dict[result] }}  *  [ {{ all_codes_count[result] }} ]
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- 展示已加入对比的配置代码 -->
+        <div class="column col-xs-1 col-md-offset-1 codes-group" style="width: auto;height: auto">
+            <div class="check-code-group">
+                <input type="submit" class="btn btn-info" value="----已入库对比配置代码----"/>
+                {% for code in CheckCodes_list %}
+                    <div class="checkbox">
+                        <label>
+                            <input type="checkbox" name="checked-codes" checked="checked" disabled>
+                                <span style="color: red;font-size: 20px">
+                                {{ code }} - {{ results_descriptionCN_dict[code] }}  *  [ {{ all_codes_count[code] }} ]
+                                </span>
+                        </label>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+
+
+
+    <script type="text/javascript">
+        // 加入对比项
+        function SetCompare() {
+
+            var SetCompareurl = window.location.href + "/SetCompare";
+            var check_codes = new Array();
+
+            var select_codes = $("input[name='checkbox-codes']:checkbox:checked");
+            select_codes.each(function () {
+                var code = $(this).attr("value");
+                check_codes.push(code)
+            });
+
+
+            if (check_codes.length == 0){
+                alert("请勾选配置代码");
+                return false;
+            }
+
+            alert("已勾选：\n"+check_codes);
+
+            // var SetCompareurl = window.location.href + "/" + check_codes
+
+            $.ajax({
+                type:'POST',
+                url:SetCompareurl,
+                //data:{codes:check_codes},
+                data:JSON.stringify(check_codes),
+                success:function() {
+                    location.reload()
+                }
+
+            });
+        }
+
+
+        // 重置，相当于刷新
+        function ResetCompare() {
+            location.reload()
+        }
+
+    </script>
+{% endblock %}

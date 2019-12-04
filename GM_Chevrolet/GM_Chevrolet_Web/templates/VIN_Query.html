@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}雪佛兰 车架号查询{% endblock %}
+
+
+
+{% block content %}
+{{ super() }}
+
+{% block page_content %}
+<div class="page-header" align="center">
+    <h1>车架号查询</h1>
+</div>
+{% endblock %}
+
+<div class="row">
+    <div class="col-md-4 col-md-offset-2">
+        <textarea class="form-control" rows="6" id="vin-list-textarea" placeholder="车架号（按行分隔）<<只允许输入字母数字及换行>>" onkeyup="value=value.replace(/[^a-zA-Z0-9\n]/g,'')"></textarea>
+
+    </div>
+    <div class="col-md-4">
+        <button type="button" class="btn btn-primary" onclick="VIN_Query()">---- 查询 ----</button>
+    </div>
+</div>
+
+<br>
+
+<div class="table-responsive">
+    <table class="table table-bordered table-condensed table-striped table-hover" style="width: 66%;height: auto" align="center">
+        <tr>
+            <th class="text-center">车架号</th>
+            <th class="text-center">生产日期</th>
+            <th class="text-center">车型ID</th>
+            <th class="text-center">车型名称</th>
+            <th class="text-center">备注</th>
+            <th class="text-center">匹配日志</th>
+        </tr>
+        <!-- 查询结果待完善 -->
+        {% for vin,vin_info in view_result.items() %}
+            <tr>
+                <td class="text-center">{{ vin }}</td>
+                <td class="text-center">{{ vin_info['productTime'] }}</td>
+                <td class="text-center">{% for id in vin_info['ModelID'] %}{{ id }}<br>{% endfor %}</td>
+                <td class="text-center">{% for name in vin_info['ModelName'] %}{{ name }}<br>{% endfor %}</td>
+                <td class="text-center">{{ vin_info['remark'] }}</td>
+                <td class="text-center">
+                    <button type="button" class="btn btn-info" onclick="QueryMatchLogs({{ vin_info['log'] }})">匹配日志</button>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<script>
+    // 查询按钮
+    function VIN_Query() {
+        var vinTextarea = $('#vin-list-textarea').val();
+
+        if (vinTextarea == ""){
+          alert("请输入车架号");
+          return false;
+        }
+
+        var vin_list = vinTextarea.split("\n");
+        var url = "/Home/Chevrolet/" + "VIN_Query";
+
+        var asyncFlag = true;
+
+        $.ajax({
+            type:'POST',
+            url:url,
+            async:asyncFlag,
+            data: JSON.stringify(vin_list),
+            success:function (response) {
+                location.reload();
+                document.write(response)
+            }
+        });
+
+    }
+
+    // 查看匹配日志
+    function QueryMatchLogs(Log) {
+        var LogStr = '';
+
+        $.each(Log,function (n,value) {
+            LogStr = LogStr + value + '\n'
+        });
+        alert(LogStr);
+    }
+
+</script>
+
+{% endblock %}

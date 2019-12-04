@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}雪佛兰 VIN分类统计{% endblock %}
+
+
+
+{% block content %}
+{{ super() }}
+
+    {% block page_content %}
+    <div class="page-header" align="center">
+        <h1>VIN分类统计</h1>
+    </div>
+    {% endblock %}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-condensed table-striped table-hover" style="width: 60%;height: auto" align="center">
+        <tr>
+            <th class="text-center">Model</th>
+            <th class="text-center">Series</th>
+            <th class="text-center">Body</th>
+            <th class="text-center">生产开始时间</th>
+            <th class="text-center">生产结束时间</th>
+            <th class="text-center">VIN数量</th>
+            <th class="text-center">操作</th>
+        </tr>
+        {% for result in results %}
+            <tr>
+                <td>{{ result[0] }}</td>
+                <td>{{ result[1] }}</td>
+                <td>{{ result[2] }}</td>
+                <td>{{ result[3] }}</td>
+                <td>{{ result[4] }}</td>
+                <td>{{ result[5] }}</td>
+                <td class="text-center">
+                    <a href="/Home/Chevrolet/model={{ result[0] }}&series={{ result[1] }}&body={{ result[2] }}" target="_blank">操作</a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+{% endblock %}

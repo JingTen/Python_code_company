@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+
+{% block title %}雪佛兰 配置查询{% endblock %}
+
+
+
+{% block content %}
+{{ super() }}
+
+{% block page_content %}
+<div class="page-header" align="center">
+    <h1>车架号配置查询</h1>
+</div>
+{% endblock %}
+
+<div class="col-md-offset-1">
+    <div class="col-sm-2">
+        <input type="text" class="form-control" id="ExampleVIN" placeholder="查询车架号" onkeyup="value=value.replace(/[^A-Z0-9]/g,'')">
+    </div>
+    <div class="col-sm-3">
+        <button type="button" class="btn btn-info" onclick="QueryVinCode()">----  查询配置参数  ----</button>
+    </div>
+</div>
+
+<br><br><br>
+
+<div class="col-md-offset-1">
+    <p><b>查询的车架号：{{ vin }}</b></p>
+    <p><b>生产时间：{{ vin_info[4] }}</b></p>
+    <p>---- 说明： ----</p>
+    <p>---- 查询结果展示所有缓存数据同Model,Series,Body,VIN8下所有配置代码的数量分布 ----</p>
+    <p>---- 其中，查询车架号的配置项为所有标红的配置代码 ----</p>
+</div>
+
+<table class="table table-bordered table-condensed table-striped table-hover col-md-offset-1" name="model-table" style="width: 50%;height: auto">
+    <tr>
+        <th class="text-center">Model</th>
+        <th class="text-center">Series</th>
+        <th class="text-center">Body</th>
+        <th class="text-center">VIN8</th>
+        <th class="text-center">生产开始时间</th>
+        <th class="text-center">生产结束时间</th>
+        <th class="text-center">VIN数量</th>
+    </tr>
+    {% for i in results_table_display %}
+        <tr>
+            <td class="text-center" id="Model">{{ i[0] }}</td>
+            <td class="text-center" id="Series">{{ i[1] }}</td>
+            <td class="text-center" id="Body">{{ i[2] }}</td>
+            <td class="text-center" id="VIN8">{{ i[3] }}</td>
+            <td class="text-center" id="生产开始时间">{{ i[4] }}</td>
+            <td class="text-center" id="生产结束时间">{{ i[5] }}</td>
+            <td class="text-center" id="VIN数量">{{ i[6] }}</td>
+        </tr>
+    {% endfor %}
+</table>
+
+<div class="row">
+    <!-- 复选框 -->
+    <div class="column col-xs-1 col-md-offset-1 codes-group" style="width: auto;height: auto">
+        <div class="code-group">
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" disabled>
+                    <b>配置代码 - 中文描述  *  [ 数量 ]</b>
+                </label>
+            </div>
+
+            {% for result in results_descriptionCN_dict %}
+                <div class="checkbox">
+                    <label>
+                    {% if result in optionCodes %}
+                        <input type="checkbox" name="checkbox-codes" value="{{ result }}">
+                            <span style="color: red;">
+                                {{ result }} - {{ results_descriptionCN_dict[result] }}  *  [ {{ all_codes_count[result] }} ]
+                            </span>
+                    {% else %}
+                        <input type="checkbox" name="checkbox-codes" value="{{ result }}" disabled>
+                        {{ result }} - {{ results_descriptionCN_dict[result] }}  *  [ {{ all_codes_count[result] }} ]
+                    {% endif %}
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    // 查询示例车架号配置代码
+    function QueryVinCode() {
+        var ExampleVIN = $('#ExampleVIN').val();
+
+        // 车架号17位检查
+        if (ExampleVIN.length != 17)
+        {
+            alert('示例车架号非17位车架号');
+            return false;
+        }
+
+        var QueryVinCodeUrl = "/Home/Chevrolet/" + "QueryVinCodeUrl";
+
+        $.ajax({
+            type:'POST',
+            url:QueryVinCodeUrl,
+            data:{
+                vin:ExampleVIN
+            },
+            success:function (response) {
+                location.reload();
+                document.write(response)
+            },
+        });
+    }
+</script>
+
+
+
+{% endblock %}

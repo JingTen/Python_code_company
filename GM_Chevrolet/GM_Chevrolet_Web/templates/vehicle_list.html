@@ -1,0 +1,51 @@
+{% extends "base.html" %}
+
+{% block title %}雪佛兰 车型列表{% endblock %}
+
+
+
+{% block content %}
+{{ super() }}
+
+    {% block page_content %}
+    <div class="page-header" align="center">
+        <h1>车型列表</h1>
+    </div>
+    {% endblock %}
+
+<div class="table-responsive">
+    <table class="table table-bordered table-condensed table-striped table-hover" style="width: 60%;height: auto" align="center">
+        <tr>
+            <th class="text-center">厂商</th>
+            <th class="text-center">车系</th>
+            <th class="text-center">车型ID</th>
+            <th class="text-center">车型名称</th>
+            <th class="text-center">动力总成</th>
+            <th class="text-center">上市时间</th>
+            <th class="text-center">匹配规则状态</th>
+            <th class="text-center">操作</th>
+        </tr>
+        {% for vehicle in vehicle_list_result %}
+            <tr>
+                <td>{{ vehicle[0] }}</td>
+                <td>{{ vehicle[1] }}</td>
+                <td>{{ vehicle[2] }}</td>
+                <td>{{ vehicle[3] }}</td>
+                <td>{{ vehicle[4] }}</td>
+                <td class="text-center">{{ vehicle[5] }}</td>
+                <td class="text-center">
+                    {% if vehicle[2] in rule_state_result_list %}已添加
+                    {% else %}<span style="color: red">未添加</span>
+                    {% endif %}
+                </td>
+                <td class="text-center">
+                    <a href="/Home/Chevrolet/id={{ vehicle[2] }}" target="_blank">
+                        <b>操作</b>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+    </table>
+</div>
+
+{% endblock %}

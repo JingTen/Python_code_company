@@ -1,0 +1,315 @@
+{% extends "base.html" %}
+
+{% block title %}雪佛兰 生成规则{% endblock %}
+
+
+
+{% block content %}
+{{ super() }}
+
+<!-- 车型基本信息 -->
+<div style="padding-left: 40px">
+    <p><b>车型ID：{{ vehicle_id_result[0][0] }}</b></p>
+    <p><b>车型名称：{{ vehicle_id_result[0][1] }}</b></p>
+    <p><b>动力总成：{{ vehicle_id_result[0][2] }}</b></p>
+    <p><b>上市时间：{{ vehicle_id_result[0][3] }}</b></p>
+</div>
+
+<br>
+
+<!-- 车型规则参数 -->
+<div class="row" id="rule-param-box">
+    <div class="col-md-5" style="padding-left: 40px">
+        <form class="form-horizontal">
+            <div class="form-group">
+                <label for="ExampleVIN" class="col-sm-3 control-label">* 示例车架号</label>
+                <div class="col-sm-5">
+                    <input type="text" class="form-control" id="ExampleVIN" placeholder="示例车架号" onkeyup="value=value.replace(/[^A-Z0-9]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][2] }}{% else %}{% endif %}">
+                </div>
+                <!-- 车架号配置查询，已移至单独页面
+                <div class="col-sm-3">
+                    <button type="button" class="btn btn-info" onclick="QueryVinCode()">----  查询配置参数  ----</button>
+                </div>
+                -->
+            </div>
+            <br>
+            <div class="form-group">
+                <label for="Model" class="col-sm-3 control-label">* Model</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="Model" placeholder="车型" onkeyup="value=value.replace(/[^A-Z0-9]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][3] }}{% else %}{% endif %}">
+                </div>
+
+            </div>
+            <div class="form-group">
+                <label for="Series" class="col-sm-3 control-label">* Series</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="Series" placeholder="车系" onkeyup="value=value.replace(/[^A-Z0-9]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][4] }}{% else %}{% endif %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Body" class="col-sm-3 control-label">* Body</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="Body" placeholder="车身" onkeyup="value=value.replace(/[^A-Z0-9]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][5] }}{% else %}{% endif %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="VIN8" class="col-sm-3 control-label">* VIN8</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="VIN8" placeholder="VIN8" onkeyup="value=value.replace(/[^A-Z0-9,]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][6] }}{% else %}{% endif %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Trans" class="col-sm-3 control-label">* 变速箱</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="Trans" placeholder="变速箱" onkeyup="value=value.replace(/[^A-Z0-9,]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][7] }}{% else %}{% endif %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="Engine" class="col-sm-3 control-label">* 发动机</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="Engine" placeholder="发动机" onkeyup="value=value.replace(/[^A-Z0-9,]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][8] }}{% else %}{% endif %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="NotCode" class="col-sm-3 control-label">反向配置</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="NotCode" placeholder="反向配置" onkeyup="value=value.replace(/[^A-Z0-9,]/g,'')" value="{% if rule_view_result %}{{ rule_view_result[0][9] }}{% else %}{% endif %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="StartTime" class="col-sm-3 control-label">限定开始时间</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="StartTime" placeholder="yyyy-mm-dd" value="{% if rule_view_result %}{{ rule_view_result[0][10] }}{% else %}{% endif %}">
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="EndTime" class="col-sm-3 control-label">限定结束时间</label>
+                <div class="col-sm-9">
+                    <input type="text" class="form-control" id="EndTime" placeholder="yyyy-mm-dd" value="{% if rule_view_result %}{{ rule_view_result[0][11] }}{% else %}{% endif %}">
+                </div>
+            </div>
+        </form>
+
+        <div class="col-sm-12">
+            <button type="button" class="btn btn-success" onclick="SaveRuleParam()">----  保存规则参数  ----</button>
+        </div>
+
+    </div>
+    <!-- 所有配置代码复选框
+    <div class="column col-xs-1 col-md-offset-1 codes-group" style="width: auto;height: auto">
+        <div class="code-group">
+            <button type="button" class="btn btn-danger" onclick="SetCompare()">
+                ---- 批量添加配置代码（待开发）----
+            </button>
+            <input type="submit" class="btn btn-success" value="----清除已勾选配置代码----" name="resetBtn" onclick="ResetCompare()"/>
+            <div class="checkbox">
+                <label>
+                    <input type="checkbox" disabled>
+                    <b>配置代码 - 中文描述  *  [ 数量 ]</b>
+                </label>
+            </div>
+
+            {% for result in results_descriptionCN_dict %}
+                <div class="checkbox">
+                    <label>
+                    {% if result in optionCodes %}
+                        <input type="checkbox" name="checkbox-codes" value="{{ result }}">
+                            <span style="color: red;">
+                                {{ result }} - {{ results_descriptionCN_dict[result] }}  *  [ {{ all_codes_count[result] }} ]
+                            </span>
+                    {% else %}
+                        <input type="checkbox" name="checkbox-codes" value="{{ result }}" disabled>
+                        {{ result }} - {{ results_descriptionCN_dict[result] }}  *  [ {{ all_codes_count[result] }} ]
+                    {% endif %}
+                    </label>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+    -->
+</div>
+
+<br><br><br>
+
+
+
+<div class="row">
+    <div class="col-md-5" style="padding-left: 50px">
+        <table class="table table-bordered table-condensed table-striped table-hover">
+            <tbody>
+                <tr>
+                    <th class="text-center">配置代码</th>
+                    <th class="text-center">中文描述</th>
+                    <th class="text-center">操作</th>
+                </tr>
+                {% for MatchCode_descriptionCN in MatchCode_descriptionCN_result %}
+                    <tr>
+                        <td class="text-center">{{ MatchCode_descriptionCN[0] }}</td>
+                        <td class="text-center">{{ MatchCode_descriptionCN[1] }}</td>
+                        <td class="text-center">
+                            <button type="button" class="btn btn-danger" onclick="RemoveCode('{{ MatchCode_descriptionCN[0] }}');">删除</button>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    <div class="col-md-5">
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="optionCode"></label>
+                <input type="email" class="form-control" id="optionCode" autocomplete="off" placeholder="optionCode" onkeyup="value=value.replace(/[^A-Z0-9]/g,'')">
+            </div>
+            <button type="button" class="btn btn-default" onclick="AddCode();">添加配置代码</button>
+        </form>
+    </div>
+</div>
+
+<script>
+
+    // 保存规则参数
+    function SaveRuleParam() {
+
+        var ModelID = '{{ ModelID }}';
+
+        var ExampleVIN = $('#ExampleVIN').val();
+
+        var Model = $('#Model').val();
+        var Series = $('#Series').val();
+        var Body = $('#Body').val();
+        var VIN8 = $('#VIN8').val();
+        var Trans = $('#Trans').val();
+        var Engine = $('#Engine').val();
+        var NotCode = $('#NotCode').val();
+        var StartTime = $('#StartTime').val();
+        var EndTime = $('#EndTime').val();
+
+        var SaveRuleParamUrl = "/Home/Chevrolet/" + "SaveRuleParam";
+
+        // 基本参数完整性检查
+        if (Model.length == 0 || Series.length == 0 || Body.length == 0 || VIN8.length == 0 || Trans == 0 || Engine.length == 0 || ExampleVIN.length == 0)
+        {
+            alert('请完整填写参数');
+            return false;
+        }
+        // 车架号17位检查
+        if (ExampleVIN.length != 17)
+        {
+            alert('示例车架号非17位车架号');
+            return false;
+        }
+        // 限定时间格式检查
+        var reg = /^(\d{4})-(\d{2})-(\d{2})$/;
+        if ((StartTime.length != 0 && !reg.test(StartTime)) || (EndTime.length != 0 && !reg.test(EndTime)))
+        {
+            alert('请检查时间格式（yyyy-mm-dd）');
+            return false;
+        }
+
+        console.log("SaveRuleParam");
+
+        $.ajax({
+            type: 'POST',
+            url: SaveRuleParamUrl,
+            data:{
+                ModelID:ModelID,
+                ExampleVIN:ExampleVIN,
+                Model:Model,
+                Series:Series,
+                Body:Body,
+                VIN8:VIN8,
+                Trans:Trans,
+                Engine:Engine,
+                NotCode:NotCode,
+                StartTime:StartTime,
+                EndTime:EndTime
+            },
+            success:function() {
+                location.reload()
+            }
+        });
+    }
+
+    // 添加配置代码
+    function AddCode() {
+
+        var ModelID = '{{ ModelID }}';
+        var optionCode = $('#optionCode').val();
+
+        if (optionCode.length != 3){
+            alert('请填写3个字符的配置代码');
+            location.reload();
+            return false;
+        }
+
+        var AddCodeUrl = "/Home/Chevrolet/" + "AddCode";
+
+        $.ajax({
+            type:'POST',
+            url:AddCodeUrl,
+            data:{
+                ModelID:ModelID,
+                optionCode:optionCode
+            },
+            success:function () {
+                location.reload()
+            }
+        });
+    }
+    
+    // 删除单个配置代码
+    function RemoveCode(optionCode) {
+        var ModelID = '{{ ModelID }}';
+        if (optionCode.length == 0 || ModelID.length == 0){
+            alert('参数错误');
+            return false;
+        }
+
+        var RemoveCodeUrl = "/Home/Chevrolet/" + "RemoveCode";
+
+        $.ajax({
+            type:'POST',
+            url:RemoveCodeUrl,
+            data:{
+               ModelID:ModelID,
+               optionCode:optionCode
+            },
+            success:function () {
+                location.reload()
+            },
+        });
+    }
+
+    // 查询示例车架号配置代码
+    function QueryVinCode() {
+        var ExampleVIN = $('#ExampleVIN').val();
+
+        // 车架号17位检查
+        if (ExampleVIN.length != 17)
+        {
+            alert('示例车架号非17位车架号');
+            return false;
+        }
+
+        var QueryVinCodeUrl = "/Home/Chevrolet/" + "QueryVinCodeUrl";
+
+        $.ajax({
+            type:'POST',
+            url:QueryVinCodeUrl,
+            data:{
+                vin:ExampleVIN
+            },
+            success:function () {
+                location.reload()
+            },
+        });
+    }
+
+    // 重置，相当于刷新
+    function ResetCompare() {
+        location.reload()
+    }
+
+</script>
+
+{% endblock %}
