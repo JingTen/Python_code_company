@@ -370,7 +370,7 @@ class FormatURL(object):
     def long_url_change(self, url):
         '''每辆二手车信息URL为长链接时需要转化'''
         html = self.session.get(url, headers=self.headers, timeout=30)
-        bsObj = BeautifulSoup(html.text, 'lxml')
+        bsObj = BeautifulSoup(html.content.decode('gb18030'), 'html.parser')
         mobile_agent = str(bsObj.find('head').find('meta', {'http-equiv': 'mobile-agent'}))
         if "/dealer/" or "/lianmeng/" in mobile_agent:
             re_url = re.compile(r"/(dealer|lianmeng)/\d*/\d*\.html")

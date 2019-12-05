@@ -72,11 +72,9 @@ province_dict = {'广西': 'guangxi', '贵州': 'guizhou', '甘肃': 'gansu', '�
                               '内蒙古': 'namenggu', '宁夏': 'ningxia', '青海': 'qinghai', '陕西': 'shan_xi',
                               '四川': 'sichuan', '上海': 'shanghai', '山西': 'shanxi', '山东': 'shandong',
                               '天津': 'tianjin', '新疆': 'xinjiang', '西藏': 'xizang', '云南': 'yunnan', '浙江': 'zhejiang'
-              }
+                              }
 # 手动更改品牌
 brand_dict = {
-            '别克': 'bieke', '宾利': 'binli',
-            '保时捷': 'baoshijie', '比亚迪': 'biyadi', '北汽昌河': 'beiqichanghe', '奔腾': 'benteng', '标致': 'biaozhi',
             '本田': 'bentian', '宝马': 'baoma', '北京': 'beijing', '长安': 'changan', '长城': 'changcheng',
             '长安欧尚': 'changanoushang', '成功汽车': 'chenggongqiche', '长安轻型车': 'changanqingxingche',
             '长安跨越': 'changankuayue', '电咖': 'dianka', '东风风光': 'dongfengfengguang', '东风风行': 'dongfengfengxing',
